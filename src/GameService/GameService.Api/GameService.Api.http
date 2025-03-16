@@ -1,0 +1,37 @@
+@GameService.Api_HostAddress = https://localhost:7255
+
+GET {{GameService.Api_HostAddress}}/games/
+Accept: application/json
+
+###
+
+# @name createGame
+POST {{GameService.Api_HostAddress}}/games/
+Content-Type: application/json
+
+{
+  "name": "New Game",
+  "genres": [0],
+  "releaseDate": "2023-10-01"
+}
+
+###
+
+GET {{GameService.Api_HostAddress}}/games/
+Accept: application/json
+
+###
+
+PUT {{GameService.Api_HostAddress}}/games/{id}
+Content-Type: application/json
+
+{
+  "name": "Updated Game",
+  "genre": "Action",
+  "releaseDate": "2023-11-01"
+}
+
+###
+
+DELETE {{GameService.Api_HostAddress}}/games/01959f73-7ebf-7720-b179-c2143dae68b5
+Accept: application/json

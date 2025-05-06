@@ -43,7 +43,7 @@ namespace GameService.Domain.Aggregates
 
         public void AddReview(Review review)
         {
-            var reviewAddedEvent = new ReviewAddedEvent(
+            var reviewAddedEvent = new ReviewAdded(
                 AggregateId: Id,
                 OccurredOn: DateTimeOffset.UtcNow,
                 ReviewId: Guid.CreateVersion7(),
@@ -57,10 +57,11 @@ namespace GameService.Domain.Aggregates
 
         public void RemoveReview(Review review)
         {
-            var reviewRemovedEvent = new ReviewRemovedEvent(
+            var reviewRemovedEvent = new ReviewRemoved(
                 AggregateId : Id,
                 OccurredOn: DateTime.UtcNow,
-                ReviewId: review.Id);
+                ReviewId: review.Id, 
+                Rating: review.Rating);
 
             Apply(reviewRemovedEvent);
             AddDomainEvent(reviewRemovedEvent);
@@ -70,13 +71,13 @@ namespace GameService.Domain.Aggregates
         {
             switch (@event)
             {
-                case GameCreatedEvent gameCreatedEvent:
+                case GameCreated gameCreatedEvent:
                     HandleGameCreatedEvent(gameCreatedEvent);
                     break;
-                case ReviewAddedEvent reviewAddedEvent:
+                case ReviewAdded reviewAddedEvent:
                     HandleReviewAddedEvent(reviewAddedEvent);
                     break;
-                case ReviewRemovedEvent reviewRemovedEvent:
+                case ReviewRemoved reviewRemovedEvent:
                     HandleReviewRemovedEvent(reviewRemovedEvent);
                     break;
                 default:
@@ -84,7 +85,7 @@ namespace GameService.Domain.Aggregates
             }
         }
 
-        private void HandleGameCreatedEvent(GameCreatedEvent @event)
+        private void HandleGameCreatedEvent(GameCreated @event)
         {
             Id = @event.AggregateId;
             Name = new Name(@event.Name);
@@ -92,13 +93,13 @@ namespace GameService.Domain.Aggregates
             _genres.AddRange(@event.Genres.Select(g => (Genre)g));
         }
 
-        private void HandleReviewAddedEvent(ReviewAddedEvent @event)
+        private void HandleReviewAddedEvent(ReviewAdded @event)
         {
             var review = new Review(@event.ReviewId, @event.AggregateId, @event.UserId, @event.Content, @event.Rating);
             _reviews.Add(review);
         }
 
-        private void HandleReviewRemovedEvent(ReviewRemovedEvent @event)
+        private void HandleReviewRemovedEvent(ReviewRemoved @event)
         {
             _reviews.RemoveAll(r => r.Id == @event.ReviewId);
         }

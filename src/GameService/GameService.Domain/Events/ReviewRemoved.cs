@@ -2,7 +2,8 @@
 
 namespace GameService.Domain.Events;
 
-public record ReviewRemovedEvent(
-    Guid AggregateId, 
+public record ReviewRemoved(
+    Guid AggregateId,
     DateTimeOffset OccurredOn, 
-    Guid ReviewId) : IDomainEvent;
+    Guid ReviewId,
+    double Rating) : IDomainEvent;

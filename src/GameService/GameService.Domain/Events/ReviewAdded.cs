@@ -2,7 +2,7 @@
 
 namespace GameService.Domain.Events;
 
-public record ReviewAddedEvent(
+public record ReviewAdded(
     Guid AggregateId,
     DateTimeOffset OccurredOn,
     Guid ReviewId,

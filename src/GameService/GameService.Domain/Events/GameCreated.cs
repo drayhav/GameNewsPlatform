@@ -2,7 +2,7 @@
 
 namespace GameService.Domain.Events;
 
-public record GameCreatedEvent(
+public record GameCreated(
     Guid AggregateId,
     DateTimeOffset OccurredOn,
     string Name,

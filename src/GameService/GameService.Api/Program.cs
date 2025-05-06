@@ -33,13 +33,9 @@ builder.Services.AddMarten(options =>
     options.Events.AddEventType(typeof(ReviewAdded));
 
     options.Events.StreamIdentity = Marten.Events.StreamIdentity.AsGuid;
-
-    // Specify that we want to use STJ as our serializer
     options.UseSystemTextJsonForSerialization();
-
     options.AutoCreateSchemaObjects = AutoCreate.All;
-
-    //options.Projections.Add<GameRatingInfoProjection>(ProjectionLifecycle.Inline);
+    options.Projections.Add<GameRatingInfoProjection>(ProjectionLifecycle.Inline);
 
 }).UseLightweightSessions();
 

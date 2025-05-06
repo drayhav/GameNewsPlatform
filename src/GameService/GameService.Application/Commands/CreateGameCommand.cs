@@ -19,8 +19,9 @@ namespace GameService.Application.Commands
         {
             var game = GameFactory.Create(request.Name, request.ReleaseDate, request.Genres);
 
-            await _unitOfWork.GameRepository.AddAsync(game);
+            await _unitOfWork.GameRepository.Store(game);
             await _unitOfWork.SaveChangesAsync();
+
             return game.Id;
         }
     }

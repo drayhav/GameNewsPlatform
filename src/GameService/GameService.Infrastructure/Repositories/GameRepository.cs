@@ -11,12 +11,21 @@ public class GameRepository : IGameRepository
 
     public GameRepository(IDocumentSession session) => _session = session;
 
-    public async Task AddAsync(Game game)
+    public async Task Store(Game game)
     {
-        var streamId = game.Id;
-        var events = game.UncomittedEvents;
+        var stream = await _session.Events.FetchStreamAsync(game.Id);
 
-        _session.Events.StartStream<Game>(streamId, events);
+        if (stream is null)
+        {
+            var streamId = game.Id;
+            var events = game.UncomittedEvents;
+            _session.Events.StartStream<Game>(streamId, events);
+        }
+        else
+        {
+            _session.Events.Append(game.Id, game.UncomittedEvents);
+        }
+
         await _session.SaveChangesAsync();
 
         game.ClearUncomittedEvents();
@@ -24,23 +33,14 @@ public class GameRepository : IGameRepository
 
     public async Task<Game> GetByIdAsync(Guid id)
     {
-        try
+        var events = await _session.Events.FetchStreamAsync(id);
+
+        if (events == null || events.Count == 0)
         {
-
-            var events = await _session.Events.FetchStreamAsync(id);
-
-            if (events == null || events.Count == 0)
-            {
-                throw new Exception($"Game with ID {id} not found.");
-            }
-
-            return Game.RebuildFromEvents(events.Select(e => (IDomainEvent)e.Data));
+            throw new Exception($"Game with ID {id} not found.");
         }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
-        }
+
+        return Game.RebuildFromEvents(events.Select(e => (IDomainEvent)e.Data));
     }
 
     public async Task RemoveByIdAsync(Guid id)

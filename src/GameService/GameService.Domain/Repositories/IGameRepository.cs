@@ -4,7 +4,7 @@ namespace GameService.Domain.Repositories;
 
 public interface IGameRepository
 {
-    Task AddAsync(Game game);
+    Task Store(Game game);
 
     Task<Game> GetByIdAsync(Guid id);
 

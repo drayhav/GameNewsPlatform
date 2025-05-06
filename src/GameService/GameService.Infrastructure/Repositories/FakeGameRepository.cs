@@ -11,7 +11,7 @@ namespace GameService.Infrastructure.Repositories
             _games = new List<Game>();
         }
 
-        public Task AddAsync(Game game)
+        public Task Store(Game game)
         {
             _games.Add(game);
             return Task.CompletedTask;

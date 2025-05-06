@@ -45,6 +45,15 @@ namespace GameService.Api.Endpoints
             .WithOpenApi()
             .WithName("CreateGame");
 
+            gameGroup.MapPost("/reviews", async (AddReviewRequest request, IMediator mediator) =>
+            {
+                var command = request.ToCommand();
+                var createdId = await mediator.Send<CreateReviewCommand, Guid>(command);
+                return Results.Created($"/games/reviews/{createdId}", createdId);
+            })
+            .WithOpenApi()
+            .WithName("CreateReview");
+
             gameGroup.MapDelete("/{id:guid}", async (Guid id, IMediator mediator) =>
             {
                 var command = new RemoveGameCommand(id);

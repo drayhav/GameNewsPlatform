@@ -38,13 +38,18 @@ namespace GameService.Domain.Aggregates
 
         public static Game RebuildFromEvents(IEnumerable<IDomainEvent> events)
         {
-            return new Game(events);
+            return new Game(events.OrderBy(e => e.OccurredOn));
         }
 
         public void AddReview(Review review)
         {
-            var reviewAddedEvent = new ReviewAddedEvent(Guid.CreateVersion7(), Id, review.UserId, 
-                DateTime.UtcNow, review.Content, review.Rating);
+            var reviewAddedEvent = new ReviewAddedEvent(
+                AggregateId: Id,
+                OccurredOn: DateTimeOffset.UtcNow,
+                ReviewId: Guid.CreateVersion7(),
+                UserId: review.UserId,
+                Content: review.Content,
+                Rating: review.Rating);
 
             Apply(reviewAddedEvent);
             AddDomainEvent(reviewAddedEvent);
@@ -52,7 +57,13 @@ namespace GameService.Domain.Aggregates
 
         public void RemoveReview(Review review)
         {
-            _reviews.Remove(review);
+            var reviewRemovedEvent = new ReviewRemovedEvent(
+                AggregateId : Id,
+                OccurredOn: DateTime.UtcNow,
+                ReviewId: review.Id);
+
+            Apply(reviewRemovedEvent);
+            AddDomainEvent(reviewRemovedEvent);
         }
 
         private void Apply(IDomainEvent @event)
@@ -64,6 +75,9 @@ namespace GameService.Domain.Aggregates
                     break;
                 case ReviewAddedEvent reviewAddedEvent:
                     HandleReviewAddedEvent(reviewAddedEvent);
+                    break;
+                case ReviewRemovedEvent reviewRemovedEvent:
+                    HandleReviewRemovedEvent(reviewRemovedEvent);
                     break;
                 default:
                     throw new Exception($"Event {@event.GetType()} was not recognized");
@@ -82,6 +96,11 @@ namespace GameService.Domain.Aggregates
         {
             var review = new Review(@event.ReviewId, @event.AggregateId, @event.UserId, @event.Content, @event.Rating);
             _reviews.Add(review);
+        }
+
+        private void HandleReviewRemovedEvent(ReviewRemovedEvent @event)
+        {
+            _reviews.RemoveAll(r => r.Id == @event.ReviewId);
         }
     }
 }

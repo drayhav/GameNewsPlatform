@@ -1,4 +1,6 @@
-﻿using GameService.Domain.Aggregates;
+﻿using GameService.Application.IntegrationEvents;
+using GameService.Domain.Aggregates;
+using GameService.Domain.Events;
 using GameService.Domain.Repositories;
 using GameService.Domain.SeedWork;
 using Marten;
@@ -8,8 +10,13 @@ namespace GameService.Infrastructure.Repositories;
 public class GameRepository : IGameRepository
 {
     private readonly IDocumentSession _session;
+    private readonly IMessagePublisher _messagePublisher;
 
-    public GameRepository(IDocumentSession session) => _session = session;
+    public GameRepository(IDocumentSession session, IMessagePublisher messagePublisher)
+    {
+        _session = session;
+        _messagePublisher = messagePublisher;
+    }
 
     public async Task Store(Game game)
     {
@@ -27,6 +34,30 @@ public class GameRepository : IGameRepository
         }
 
         await _session.SaveChangesAsync();
+
+        foreach (var @event in game.UncomittedEvents)
+        {
+            if (@event is GameCreated gameCreated)
+            {
+                var integrationEvent = new GameCreatedIntegrationEvent(
+                   GameId: game.Id,
+                   Name: game.Name.Value,
+                   ReleaseDate: game.ReleaseDate,
+                   Genres: game.Genres.Select(g => g.Name).ToList());
+                await _messagePublisher.PublishAsync(integrationEvent);
+            }
+            else if (@event is ReviewAdded reviewAdded)
+            {
+                var integrationEvent = new ReviewAddedIntegrationEvent(
+                    GameId: game.Id,
+                    ReviewId: reviewAdded.ReviewId,
+                    UserId: reviewAdded.UserId,
+                    Rating: reviewAdded.Rating,
+                    Content: reviewAdded.Content);
+
+                await _messagePublisher.PublishAsync(integrationEvent);
+            }
+        }
 
         game.ClearUncomittedEvents();
     }

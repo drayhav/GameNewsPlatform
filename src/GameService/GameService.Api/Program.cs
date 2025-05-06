@@ -3,6 +3,7 @@ using GameService.Api.Endpoints;
 using GameService.Api.Middleware;
 using GameService.Application;
 using GameService.Application.Converters;
+using GameService.Application.IntegrationEvents;
 using GameService.Domain.Events;
 using GameService.Infrastructure;
 using GameService.Infrastructure.Projections;
@@ -11,6 +12,8 @@ using Marten.Events.Projections;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Weasel.Core;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,18 @@ builder.Services.AddMarten(options =>
     options.Projections.Add<GameRatingInfoProjection>(ProjectionLifecycle.Inline);
 
 }).UseLightweightSessions();
+
+builder.Services.AddWolverine(options =>
+{
+    options.UseRabbitMq(rabbit =>
+    {
+        rabbit.HostName = builder.Configuration["RabbitMQ:HostName"]!;
+        rabbit.UserName = builder.Configuration["RabbitMQ:UserName"]!;
+        rabbit.Password = builder.Configuration["RabbitMQ:Password"]!;
+    })
+    .UseConventionalRouting()
+    .AutoProvision();
+});
 
 builder.Services.AddScoped<IMediator, Mediator>();
 

@@ -1,4 +1,5 @@
 ﻿using GameService.Domain;
+using GameService.Domain.Repositories;
 
 namespace GameService.Infrastructure
 {

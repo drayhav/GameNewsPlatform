@@ -1,4 +1,6 @@
-﻿namespace GameService.Infrastructure.Entities
+﻿using GameService.Domain.Aggregates;
+
+namespace GameService.Infrastructure.Entities
 {
     public class GameEntity
     {
@@ -8,6 +10,17 @@
 
         public DateOnly ReleaseDate { get; set; }
 
-        public IEnumerable<int> Genres { get; set; }
+        public IEnumerable<string> Genres { get; set; }
+
+        public static GameEntity FromGame(Game game)
+        {
+            return new GameEntity
+            {
+                Id = game.Id,
+                Name = game.Name.Value,
+                ReleaseDate = game.ReleaseDate,
+                Genres = game.Genres.Select(g => g.Name),
+            };
+        }
     }
 }

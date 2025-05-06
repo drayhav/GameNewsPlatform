@@ -1,9 +1,10 @@
-﻿using GameService.Domain;
-using MediatR;
+﻿using Common.Stuff.Mediator;
+using GameService.Domain;
+using GameService.Domain.Aggregates;
 
 namespace GameService.Application.Queries
 {
-    public record GetGamesQuery : IRequest<IEnumerable<Game>>;
+    public record GetGamesQuery;
 
     public class GetGamesQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetGamesQuery, IEnumerable<Game>>
     {
@@ -11,7 +12,8 @@ namespace GameService.Application.Queries
 
         public async Task<IEnumerable<Game>> Handle(GetGamesQuery request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.GameRepository.GetAllAsync();
+            // return await _unitOfWork.GameRepository.GetAllAsync();
+            throw new NotImplementedException("This method is not implemented yet.");
         }
     }
 }

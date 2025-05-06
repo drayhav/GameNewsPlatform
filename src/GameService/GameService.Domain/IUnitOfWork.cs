@@ -1,4 +1,6 @@
-﻿namespace GameService.Domain
+﻿using GameService.Domain.Repositories;
+
+namespace GameService.Domain
 {
     public interface IUnitOfWork
     {

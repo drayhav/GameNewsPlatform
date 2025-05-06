@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using Common.Stuff.Mediator;
+using GameService.Api.Requests;
 using GameService.Application.Commands;
 using GameService.Application.Queries;
+using GameService.Domain.Aggregates;
 using GameService.Infrastructure.Entities;
-using MediatR;
 using Microsoft.OpenApi.Models;
 
 namespace GameService.Api.Endpoints
@@ -14,60 +15,42 @@ namespace GameService.Api.Endpoints
             var gameGroup = app
                 .MapGroup("games")
                 .WithTags("games")
-                .WithOpenApi(o => 
+                .WithOpenApi(o =>
                 {
                     o.Servers.Add(new OpenApiServer()
                     {
                         Url = "https://localhost:8081"
                     });
-                    
-                    return o; 
+
+                    return o;
                 });
 
-            gameGroup.MapGet("/", async (IMediator mediator, IMapper mapper) =>
-            {
-                var query = new GetGamesQuery();
-                var games = await mediator.Send(query);
-
-                return Results.Ok(mapper.Map<IEnumerable<GameEntity>>(games));
-            })
-            .WithOpenApi()
-            .WithName("GetGamesTest")
-            .WithOrder(0);
-
-            gameGroup.MapGet("/{id:guid}", async (Guid id, IMediator mediator, IMapper mapper) =>
+            gameGroup.MapGet("/{id:guid}", async (Guid id, IMediator mediator) =>
             {
                 var query = new GetGameByIdQuery(id);
-                var game = await mediator.Send(query);
+                var game = await mediator.Send<GetGameByIdQuery, Game>(query);
+                var gameEntity = GameEntity.FromGame(game);
 
-                return game is null ? Results.NotFound() : Results.Ok(game);
+                return game is null ? Results.NotFound() : Results.Ok(gameEntity);
             })
             .WithOpenApi()
             .WithName("GetGameById")
             .WithOrder(0);
 
-            gameGroup.MapPost("/", async (CreateGameCommand command, IMediator mediator) =>
+            gameGroup.MapPost("/", async (CreateGameRequest request, IMediator mediator) =>
             {
-                var createdId = await mediator.Send(command);
+                var command = request.ToCommand();
+                var createdId = await mediator.Send<CreateGameCommand, Guid>(command);
                 return Results.Created($"/games/{createdId}", createdId);
             })
             .WithOpenApi()
-            .WithName("CreateGame");
-
-            gameGroup.MapPut("/{id:guid}", async context =>
-            {
-                var id = context.Request.RouteValues["id"];
-                // Logic to update a game by id
-                await context.Response.WriteAsync($"Game updated for id: {id}");
-            })
-            .WithOpenApi()
-            .WithName("UpdateGame")
+            .WithName("CreateGame")
             .WithOrder(1);
-            
+
             gameGroup.MapDelete("/{id:guid}", async (Guid id, IMediator mediator) =>
             {
                 var command = new RemoveGameCommand(id);
-                await mediator.Send(command);
+                await mediator.Send<RemoveGameCommand, bool>(command);
 
                 return Results.NoContent();
             })

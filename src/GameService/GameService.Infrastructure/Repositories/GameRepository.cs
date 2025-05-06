@@ -1,53 +1,51 @@
-﻿using AutoMapper;
-using GameService.Domain;
-using GameService.Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using GameService.Domain.Aggregates;
+using GameService.Domain.Repositories;
+using GameService.Domain.SeedWork;
+using Marten;
 
-namespace GameService.Infrastructure.Repositories
+namespace GameService.Infrastructure.Repositories;
+
+public class GameRepository : IGameRepository
 {
-    public class GameRepository : IGameRepository
+    private readonly IDocumentSession _session;
+
+    public GameRepository(IDocumentSession session) => _session = session;
+
+    public async Task AddAsync(Game game)
     {
-        private readonly GameContext _gameContext;
-        private readonly IMapper _mapper;
+        var streamId = game.Id;
+        var events = game.UncomittedEvents;
 
-        public GameRepository(GameContext gameContext, IMapper mapper)
+        _session.Events.StartStream<Game>(streamId, events);
+        await _session.SaveChangesAsync();
+
+        game.ClearUncomittedEvents();
+    }
+
+    public async Task<Game> GetByIdAsync(Guid id)
+    {
+        try
         {
-            _gameContext = gameContext;
-            _mapper = mapper;
-        }
 
-        public async Task AddAsync(Game game)
-        {
-            var existingGame = await _gameContext.Games.FirstOrDefaultAsync(x => x.Id == game.Id);
+            var events = await _session.Events.FetchStreamAsync(id);
 
-            if (existingGame != null)
+            if (events == null || events.Count == 0)
             {
-                throw new Exception("Game already exists");
+                throw new Exception($"Game with ID {id} not found.");
             }
 
-            var gameEntity = _mapper.Map<GameEntity>(game);
-            await _gameContext.Games.AddAsync(gameEntity);
+            return Game.RebuildFromEvents(events.Select(e => (DomainEvent)e.Data));
         }
-
-        public async Task<IEnumerable<Game>> GetAllAsync()
+        catch(Exception ex)
         {
-            var games = await _gameContext.Games.ToListAsync();
-            return _mapper.Map<IEnumerable<Game>>(games);
+            Console.WriteLine(ex.Message);
+            throw;
         }
+    }
 
-        public async Task<Game> GetByIdAsync(Guid id)
-        {
-            var game = await _gameContext.Games.FirstOrDefaultAsync(game => game.Id == id);
-            var gameEntity = _mapper.Map<Game>(game);
-            return gameEntity;
-        }
-
-        public async Task RemoveByIdAsync(Guid id)
-        {
-            var game = await _gameContext.Games.FirstOrDefaultAsync(game => game.Id == id) 
-                ?? throw new Exception("Game not found");
-
-            _gameContext.Games.Remove(game);
-        }
+    public async Task RemoveByIdAsync(Guid id)
+    {
+        _session.Events.ArchiveStream(id);
+        await _session.SaveChangesAsync();
     }
 }

@@ -15,13 +15,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameService.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameService.Api", "src\GameService\GameService.Api\GameService.Api.csproj", "{75C16735-B1CD-425D-AC83-8FE6047A8C7E}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		aspnetcore.pfx = aspnetcore.pfx
+		docker-compose.yml = docker-compose.yml
 		readme.md = readme.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewsService", "NewsService", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsService.Api", "src\NewsService\NewsService.Api\NewsService.Api.csproj", "{F6DAA233-BF6F-43D9-961B-EC42680A268C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{995FC43E-9CE2-4CBC-8BBA-DC30D3AEBE60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Stuff", "src\Common\Common.Stuff\Common.Stuff.csproj", "{B9C593D4-544C-4C2E-A4EC-5721C677D010}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +52,14 @@ Global
 		{75C16735-B1CD-425D-AC83-8FE6047A8C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75C16735-B1CD-425D-AC83-8FE6047A8C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75C16735-B1CD-425D-AC83-8FE6047A8C7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6DAA233-BF6F-43D9-961B-EC42680A268C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6DAA233-BF6F-43D9-961B-EC42680A268C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6DAA233-BF6F-43D9-961B-EC42680A268C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6DAA233-BF6F-43D9-961B-EC42680A268C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9C593D4-544C-4C2E-A4EC-5721C677D010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9C593D4-544C-4C2E-A4EC-5721C677D010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9C593D4-544C-4C2E-A4EC-5721C677D010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9C593D4-544C-4C2E-A4EC-5721C677D010}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +70,10 @@ Global
 		{BA8A73D2-CEA9-41FA-B191-9CE452D5F375} = {3721A6D3-5D50-4FB4-B53C-21D8639CF2B5}
 		{BB4C057D-B64B-42C6-8713-2D0A242807F8} = {3721A6D3-5D50-4FB4-B53C-21D8639CF2B5}
 		{75C16735-B1CD-425D-AC83-8FE6047A8C7E} = {3721A6D3-5D50-4FB4-B53C-21D8639CF2B5}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {7D6619FB-965C-410E-B103-231AE0A8481F}
+		{F6DAA233-BF6F-43D9-961B-EC42680A268C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{995FC43E-9CE2-4CBC-8BBA-DC30D3AEBE60} = {7D6619FB-965C-410E-B103-231AE0A8481F}
+		{B9C593D4-544C-4C2E-A4EC-5721C677D010} = {995FC43E-9CE2-4CBC-8BBA-DC30D3AEBE60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15A36AAA-21AE-4837-8E9F-CB65F3AB93AA}

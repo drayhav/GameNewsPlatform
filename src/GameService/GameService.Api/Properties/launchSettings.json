@@ -1,14 +1,15 @@
 {
-  "profiles": {   
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
     "https": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
+      "launchBrowser": true,
       "applicationUrl": "https://localhost:7255",
-      "launchUrl": "https://localhost:7255/scalar",
-      "launchBrowser": true
+      "launchUrl": "https://localhost:7255/scalar"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",
@@ -19,6 +20,6 @@
       "publishAllPorts": true,
       "useSSL": true
     }
-  },
-  "$schema": "https://json.schemastore.org/launchsettings.json"
+  }
+
 }

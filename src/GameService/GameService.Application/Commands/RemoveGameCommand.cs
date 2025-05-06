@@ -1,18 +1,19 @@
-﻿using GameService.Application.Exceptions;
+﻿using Common.Stuff.Mediator;
+using GameService.Application.Exceptions;
 using GameService.Domain;
-using MediatR;
+using GameService.Domain.Aggregates;
 
 namespace GameService.Application.Commands
 {
-    public record RemoveGameCommand(Guid Id) : IRequest;
+    public record RemoveGameCommand(Guid Id);
 
-    public class RemoveGameCommandHandler : IRequestHandler<RemoveGameCommand>
+    public class RemoveGameCommandHandler : IRequestHandler<RemoveGameCommand, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public RemoveGameCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-        public async Task Handle(RemoveGameCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(RemoveGameCommand request, CancellationToken cancellationToken)
         {
             var game = await _unitOfWork.GameRepository.GetByIdAsync(request.Id);
 
@@ -23,6 +24,8 @@ namespace GameService.Application.Commands
 
             await _unitOfWork.GameRepository.RemoveByIdAsync(request.Id);
             await _unitOfWork.SaveChangesAsync();
+
+            return true;
         }
     }
 }

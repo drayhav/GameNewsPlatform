@@ -1,4 +1,5 @@
 ﻿using GameService.Domain;
+using GameService.Domain.Repositories;
 using GameService.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,6 @@ namespace GameService.Infrastructure
         {
             services.AddScoped<IGameRepository, GameRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
             return services;
         }

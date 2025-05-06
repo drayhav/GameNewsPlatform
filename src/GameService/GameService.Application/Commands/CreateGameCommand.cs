@@ -1,9 +1,10 @@
-﻿using GameService.Domain;
-using MediatR;
+﻿using Common.Stuff.Mediator;
+using GameService.Domain;
+using GameService.Domain.Factories;
 
 namespace GameService.Application.Commands
 {
-    public record CreateGameCommand(string Name, IEnumerable<Genre> Genres, DateOnly ReleaseDate) : IRequest<Guid>;
+    public record CreateGameCommand(string Name, List<string> Genres, DateOnly ReleaseDate);
 
     public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Guid>
     {
@@ -16,7 +17,7 @@ namespace GameService.Application.Commands
 
         public async Task<Guid> Handle(CreateGameCommand request, CancellationToken cancellationToken)
         {
-            var game = Game.Create(request.Name, request.ReleaseDate, request.Genres.ToList());
+            var game = GameFactory.Create(request.Name, request.ReleaseDate, request.Genres);
 
             await _unitOfWork.GameRepository.AddAsync(game);
             await _unitOfWork.SaveChangesAsync();

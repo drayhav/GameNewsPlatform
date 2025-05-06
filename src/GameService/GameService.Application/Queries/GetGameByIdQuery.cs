@@ -1,10 +1,11 @@
-﻿using GameService.Application.Exceptions;
+﻿using Common.Stuff.Mediator;
+using GameService.Application.Exceptions;
 using GameService.Domain;
-using MediatR;
+using GameService.Domain.Aggregates;
 
 namespace GameService.Application.Queries
 {
-    public record GetGameByIdQuery(Guid GameId) : IRequest<Game>;
+    public record GetGameByIdQuery(Guid GameId);
 
     public class GetGameByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetGameByIdQuery, Game>
     {

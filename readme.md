@@ -39,3 +39,23 @@ Go
 To apply migrations, use the following command:
 
 `dotnet ef database update -c DataWarehouseDbContext -s ..\DataWarehouse.Api\DataWarehouse.Api.csproj`
+
+### Containers
+I decided to use Podman for contenraization. It's free in comparison to Docker Desktop, and since I'm using it professionally I thought it would be a good idea to use it for my hobby projects as well.
+
+I use containers to run RabbitMQ, PostgreSQL, and SQL Server.
+
+- RabbitMQ: Message broker for communication between services. I use it with the management plugin enabled so I can use the GUI to see the messages and exchanges/queues.
+- PostgreSQL: Event storage for GameService used by Marten.  
+- SQL Server: Read model storage for DataWarehouse.  
+- pgAdmin: GUI for managing PostgreSQL.
+
+There's also pgAdmin in the docker-compose file, cause it let's me navigate through the database without installing any additional software on my machine.
+
+## How to run the containers
+Make sure you have Podman installed and running on your machine.
+
+I use this command to run the containers when in the root directory of the solution:
+
+`podman compose up --build`
+

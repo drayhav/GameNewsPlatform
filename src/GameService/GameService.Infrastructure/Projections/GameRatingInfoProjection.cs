@@ -5,6 +5,9 @@ namespace GameService.Infrastructure.Projections;
 
 public record GameRatingInfo(Guid Id, double AverageRating, int TotalReviews);
 
+/// <summary>
+/// An example of a projection to be used internally in the GameService application.
+/// </summary>
 public class GameRatingInfoProjection : SingleStreamProjection<GameRatingInfo>
 {
     public GameRatingInfo Create(GameCreated gameCreatedEvent)

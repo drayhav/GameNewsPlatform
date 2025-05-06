@@ -1,6 +1,7 @@
 ﻿using Common.Stuff.Mediator;
-using GameService.Domain;
+using GameService.Domain.Aggregates;
 using GameService.Domain.Entities;
+using GameService.Domain.Repositories;
 using GameService.Domain.ValueObjects;
 
 namespace GameService.Application.Commands
@@ -9,17 +10,17 @@ namespace GameService.Application.Commands
 
     public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, Guid>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventStore<Game> _eventStore;
 
-        public CreateReviewCommandHandler(IUnitOfWork unitOfWork)
+        public CreateReviewCommandHandler(IEventStore<Game> eventStore)
         {
-            _unitOfWork = unitOfWork;
+            _eventStore = eventStore;
         }
 
         public async Task<Guid> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
         {
             var content = ReviewContent.Create(request.Content);
-            var game = await _unitOfWork.GameRepository.GetByIdAsync(request.GameId);
+            var game = await _eventStore.GetByIdAsync(request.GameId);
 
             var review = new Review(
                 id: Guid.CreateVersion7(),
@@ -30,7 +31,7 @@ namespace GameService.Application.Commands
 
             game.AddReview(review);
 
-            await _unitOfWork.GameRepository.Store(game);
+            await _eventStore.Store(game);
             return review.Id;
         }
     }

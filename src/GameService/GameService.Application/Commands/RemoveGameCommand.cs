@@ -1,7 +1,7 @@
 ﻿using Common.Stuff.Mediator;
 using GameService.Application.Exceptions;
-using GameService.Domain;
 using GameService.Domain.Aggregates;
+using GameService.Domain.Repositories;
 
 namespace GameService.Application.Commands
 {
@@ -9,21 +9,20 @@ namespace GameService.Application.Commands
 
     public class RemoveGameCommandHandler : IRequestHandler<RemoveGameCommand, bool>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventStore<Game> _eventStore;
 
-        public RemoveGameCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        public RemoveGameCommandHandler(IEventStore<Game> eventStore) => _eventStore = eventStore;
 
         public async Task<bool> Handle(RemoveGameCommand request, CancellationToken cancellationToken)
         {
-            var game = await _unitOfWork.GameRepository.GetByIdAsync(request.Id);
+            var game = await _eventStore.GetByIdAsync(request.Id);
 
             if (game is null)
             {
                 throw new NotFoundException(typeof(Game), request.Id);
             }
 
-            await _unitOfWork.GameRepository.RemoveByIdAsync(request.Id);
-            await _unitOfWork.SaveChangesAsync();
+            await _eventStore.RemoveByIdAsync(request.Id);
 
             return true;
         }

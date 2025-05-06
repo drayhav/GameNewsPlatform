@@ -3,7 +3,7 @@ services:
  #   image: ${DOCKER_REGISTRY-}gameserviceapi:latest  
  #   build:  
  #     context: .  
- #     dockerfile: src/GameService/GameService.Api/Dockerfile  
+ #     dockerfile: src/GameService/GameService.Api/Dockerfile
  #   environment:  
  #     - ASPNETCORE_ENVIRONMENT=Development  
  #     - ASPNETCORE_HTTP_PORTS=8080  
@@ -44,6 +44,16 @@ services:
     - pgadmin_data:/var/lib/pgadmin
   depends_on:
     - postgres
+ 
+ mssql:
+   image: mcr.microsoft.com/mssql/server:2022-latest
+   environment:
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD=Sa123456
+   ports:
+     - "1433:1433"
+   volumes:
+     - mssql_data:/var/opt/mssql
 
  rabbitmq:
    image: rabbitmq:3-management
@@ -59,4 +69,5 @@ services:
 volumes:  
  postgres_data:
  rabbitmq_data:
- pgadmin_data:   
+ pgadmin_data:
+ mssql_data:   

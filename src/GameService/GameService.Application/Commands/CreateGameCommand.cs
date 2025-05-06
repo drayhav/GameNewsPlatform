@@ -1,6 +1,7 @@
 ﻿using Common.Stuff.Mediator;
-using GameService.Domain;
+using GameService.Domain.Aggregates;
 using GameService.Domain.Factories;
+using GameService.Domain.Repositories;
 
 namespace GameService.Application.Commands
 {
@@ -8,20 +9,18 @@ namespace GameService.Application.Commands
 
     public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Guid>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IEventStore<Game> _eventStore;
 
-        public CreateGameCommandHandler(IUnitOfWork unitOfWork)
+        public CreateGameCommandHandler(IEventStore<Game> eventStore)
         {
-            _unitOfWork = unitOfWork;
+            _eventStore = eventStore;
         }
 
         public async Task<Guid> Handle(CreateGameCommand request, CancellationToken cancellationToken)
         {
             var game = GameFactory.Create(request.Name, request.ReleaseDate, request.Genres);
 
-            await _unitOfWork.GameRepository.Store(game);
-            await _unitOfWork.SaveChangesAsync();
-
+            await _eventStore.Store(game);
             return game.Id;
         }
     }

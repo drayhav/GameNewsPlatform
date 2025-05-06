@@ -1,5 +1,5 @@
-﻿using GameService.Application.IntegrationEvents;
-using GameService.Domain;
+﻿using Common.Stuff.Messaging;
+using GameService.Domain.Aggregates;
 using GameService.Domain.Repositories;
 using GameService.Infrastructure.IntegrationEvents;
 using GameService.Infrastructure.Repositories;
@@ -11,8 +11,7 @@ namespace GameService.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddScoped<IGameRepository, GameRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEventStore<Game>, GameRepository>();
             services.AddScoped<IMessagePublisher, WolverineMessagePublisher>();
 
             return services;

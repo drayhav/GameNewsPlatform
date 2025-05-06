@@ -3,13 +3,13 @@
   "profiles": {
     "https": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      "launchUrl": "https://localhost:7255/scalar",
       "applicationUrl": "https://localhost:7255",
-      "launchUrl": "https://localhost:7255/scalar"
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

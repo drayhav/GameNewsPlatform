@@ -1,4 +1,5 @@
-﻿using GameService.Application.IntegrationEvents;
+﻿using Common.Stuff.Messaging;
+using GameService.Application;
 using Wolverine;
 
 namespace GameService.Infrastructure.IntegrationEvents;
@@ -15,5 +16,10 @@ public class WolverineMessagePublisher : IMessagePublisher
     public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default) where T : class
     {
         await _messageBus.PublishAsync(message);
+    }
+
+    public async Task SendAsync<T>(T message, CancellationToken cancellationToken = default) where T : class
+    {
+        await _messageBus.SendAsync(message);
     }
 }

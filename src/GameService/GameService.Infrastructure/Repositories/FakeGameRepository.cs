@@ -3,7 +3,7 @@ using GameService.Domain.Repositories;
 
 namespace GameService.Infrastructure.Repositories
 {
-    public class FakeGameRepository : IGameRepository
+    public class FakeGameRepository : IEventStore<Game>
     {
         private List<Game> _games;
         public FakeGameRepository()

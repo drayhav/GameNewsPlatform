@@ -1,6 +1,0 @@
-@NewsService.Api_HostAddress = http://localhost:5062
-
-GET {{NewsService.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

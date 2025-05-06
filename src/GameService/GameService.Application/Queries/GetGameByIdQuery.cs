@@ -2,18 +2,19 @@
 using GameService.Application.Exceptions;
 using GameService.Domain;
 using GameService.Domain.Aggregates;
+using GameService.Domain.Repositories;
 
 namespace GameService.Application.Queries
 {
     public record GetGameByIdQuery(Guid GameId);
 
-    public class GetGameByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetGameByIdQuery, Game>
+    public class GetGameByIdQueryHandler(IEventStore<Game> eventStore) : IRequestHandler<GetGameByIdQuery, Game>
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IEventStore<Game> _eventStore;
 
         public async Task<Game> Handle(GetGameByIdQuery request, CancellationToken cancellationToken)
         {
-            var game = await _unitOfWork.GameRepository.GetByIdAsync(request.GameId);
+            var game = await _eventStore.GetByIdAsync(request.GameId);
             return game ?? throw new NotFoundException(typeof(Game), request.GameId);
         }
     }

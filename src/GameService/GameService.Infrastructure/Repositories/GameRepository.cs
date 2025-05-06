@@ -1,21 +1,25 @@
-﻿using GameService.Application.IntegrationEvents;
+﻿using Common.Messages.IntegrationEvents;
+using Common.Stuff.Messaging;
 using GameService.Domain.Aggregates;
 using GameService.Domain.Events;
 using GameService.Domain.Repositories;
 using GameService.Domain.SeedWork;
 using Marten;
+using Wolverine.Marten;
 
 namespace GameService.Infrastructure.Repositories;
 
-public class GameRepository : IGameRepository
+public class GameRepository : IEventStore<Game>
 {
     private readonly IDocumentSession _session;
     private readonly IMessagePublisher _messagePublisher;
+    private readonly IMartenOutbox _outbox;
 
-    public GameRepository(IDocumentSession session, IMessagePublisher messagePublisher)
+    public GameRepository(IDocumentSession session, IMessagePublisher messagePublisher, IMartenOutbox outbox)
     {
         _session = session;
         _messagePublisher = messagePublisher;
+        _outbox = outbox;
     }
 
     public async Task Store(Game game)
@@ -33,7 +37,7 @@ public class GameRepository : IGameRepository
             _session.Events.Append(game.Id, game.UncomittedEvents);
         }
 
-        await _session.SaveChangesAsync();
+        // Need to add an outbox pattern here later.
 
         foreach (var @event in game.UncomittedEvents)
         {
@@ -44,7 +48,8 @@ public class GameRepository : IGameRepository
                    Name: game.Name.Value,
                    ReleaseDate: game.ReleaseDate,
                    Genres: game.Genres.Select(g => g.Name).ToList());
-                await _messagePublisher.PublishAsync(integrationEvent);
+                //await _messagePublisher.PublishAsync(integrationEvent);
+                await _outbox.SendAsync(integrationEvent);
             }
             else if (@event is ReviewAdded reviewAdded)
             {
@@ -55,10 +60,12 @@ public class GameRepository : IGameRepository
                     Rating: reviewAdded.Rating,
                     Content: reviewAdded.Content);
 
-                await _messagePublisher.PublishAsync(integrationEvent);
+                //await _messagePublisher.PublishAsync(integrationEvent);
+                await _outbox.SendAsync(integrationEvent);
             }
         }
 
+        await _session.SaveChangesAsync();
         game.ClearUncomittedEvents();
     }
 

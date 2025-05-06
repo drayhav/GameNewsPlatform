@@ -1,14 +1,19 @@
 ﻿using Common.Stuff.Mediator;
-using GameService.Domain;
 using GameService.Domain.Aggregates;
+using GameService.Domain.Repositories;
 
 namespace GameService.Application.Queries
 {
     public record GetGamesQuery;
 
-    public class GetGamesQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetGamesQuery, IEnumerable<Game>>
+    public class GetGamesQueryHandler : IRequestHandler<GetGamesQuery, IEnumerable<Game>>
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IEventStore<Game> _eventStore;
+
+        public GetGamesQueryHandler(IEventStore<Game> eventStore)
+        {
+            _eventStore = eventStore;
+        }
 
         public async Task<IEnumerable<Game>> Handle(GetGamesQuery request, CancellationToken cancellationToken)
         {

@@ -20,7 +20,7 @@ namespace GameService.Domain.Aggregates
 
         public double? CurrentScore => _reviews.Count != 0 ? _reviews.Average(r => r.Rating) : null;
 
-        private Game(IEnumerable<DomainEvent> events)
+        private Game(IEnumerable<IDomainEvent> events)
         {
             foreach (var @event in events)
             {
@@ -36,7 +36,7 @@ namespace GameService.Domain.Aggregates
             _genres.AddRange(genres);
         }
 
-        public static Game RebuildFromEvents(IEnumerable<DomainEvent> events)
+        public static Game RebuildFromEvents(IEnumerable<IDomainEvent> events)
         {
             return new Game(events);
         }
@@ -55,7 +55,7 @@ namespace GameService.Domain.Aggregates
             _reviews.Remove(review);
         }
 
-        private void Apply(DomainEvent @event)
+        private void Apply(IDomainEvent @event)
         {
             switch (@event)
             {
@@ -66,7 +66,7 @@ namespace GameService.Domain.Aggregates
                     HandleReviewAddedEvent(reviewAddedEvent);
                     break;
                 default:
-                    throw new Exception($"Event {@event.EventType} was not recognized");
+                    throw new Exception($"Event {@event.GetType()} was not recognized");
             }
         }
 
@@ -80,7 +80,7 @@ namespace GameService.Domain.Aggregates
 
         private void HandleReviewAddedEvent(ReviewAddedEvent @event)
         {
-            var review = new Review(@event.Id, @event.AggregateId, @event.UserId, @event.Content, @event.Rating);
+            var review = new Review(@event.ReviewId, @event.AggregateId, @event.UserId, @event.Content, @event.Rating);
             _reviews.Add(review);
         }
     }

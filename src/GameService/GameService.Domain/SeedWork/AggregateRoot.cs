@@ -2,13 +2,13 @@
 {
     public abstract class AggregateRoot
     {
-        private List<DomainEvent> _uncomittedEvents = [];
+        private List<IDomainEvent> _uncomittedEvents = [];
 
         public Guid Id { get; protected set; }
 
-        public IReadOnlyCollection<DomainEvent> UncomittedEvents => _uncomittedEvents.AsReadOnly();
+        public IReadOnlyCollection<IDomainEvent> UncomittedEvents => _uncomittedEvents.AsReadOnly();
 
-        public void AddDomainEvent(DomainEvent domainEvent)
+        public void AddDomainEvent(IDomainEvent domainEvent)
         {
             _uncomittedEvents.Add(domainEvent);
         }

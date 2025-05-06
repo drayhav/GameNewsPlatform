@@ -20,8 +20,7 @@ namespace GameService.Domain.Factories
             }
 
             var gameId = Guid.CreateVersion7();
-            var createdEvent = new GameCreatedEvent(Guid.CreateVersion7(), gameId,
-                DateTimeOffset.UtcNow, name, releaseDate, genres);
+            var createdEvent = new GameCreatedEvent(gameId, DateTimeOffset.UtcNow, name, releaseDate, genres);
 
             var game = Game.RebuildFromEvents(new[] { createdEvent });
             game.AddDomainEvent(createdEvent);

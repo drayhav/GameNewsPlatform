@@ -34,8 +34,7 @@ namespace GameService.Api.Endpoints
                 return game is null ? Results.NotFound() : Results.Ok(gameEntity);
             })
             .WithOpenApi()
-            .WithName("GetGameById")
-            .WithOrder(0);
+            .WithName("GetGameById");
 
             gameGroup.MapPost("/", async (CreateGameRequest request, IMediator mediator) =>
             {
@@ -44,8 +43,7 @@ namespace GameService.Api.Endpoints
                 return Results.Created($"/games/{createdId}", createdId);
             })
             .WithOpenApi()
-            .WithName("CreateGame")
-            .WithOrder(1);
+            .WithName("CreateGame");
 
             gameGroup.MapDelete("/{id:guid}", async (Guid id, IMediator mediator) =>
             {
@@ -56,8 +54,7 @@ namespace GameService.Api.Endpoints
             })
             .WithOpenApi()
             .WithName("DeleteGame")
-            .WithDescription("Deletes a game by id")
-            .WithOrder(2);
+            .WithDescription("Deletes a game by id");
         }
     }
 }

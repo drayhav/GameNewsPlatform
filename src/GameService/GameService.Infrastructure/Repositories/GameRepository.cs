@@ -34,7 +34,7 @@ public class GameRepository : IGameRepository
                 throw new Exception($"Game with ID {id} not found.");
             }
 
-            return Game.RebuildFromEvents(events.Select(e => (DomainEvent)e.Data));
+            return Game.RebuildFromEvents(events.Select(e => (IDomainEvent)e.Data));
         }
         catch(Exception ex)
         {

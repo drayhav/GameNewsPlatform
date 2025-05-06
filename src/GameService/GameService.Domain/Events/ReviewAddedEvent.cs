@@ -2,15 +2,19 @@
 
 namespace GameService.Domain.Events
 {
-    public class ReviewAddedEvent(Guid Id, Guid AggregateId, Guid UserId, DateTime OccuredOn, string Content, double Rating) 
-        : DomainEvent(Id, AggregateId, OccuredOn)
+    public class ReviewAddedEvent(Guid ReviewId, Guid AggregateId, Guid UserId, DateTime OccurredOn, string Content, double Rating) 
+        : IDomainEvent
     {
-        public double Rating { get; } = Rating;
+        public Guid AggregateId { get; } = AggregateId;
 
-        public string Content { get; } = Content;
+        public DateTimeOffset OccurredOn { get; } = OccurredOn;
+
+        public Guid ReviewId { get; } = ReviewId;
 
         public Guid UserId { get; } = UserId;
 
-        public override string EventType => nameof(ReviewAddedEvent);
+        public double Rating { get; } = Rating;
+
+        public string Content { get; } = Content; 
     }
 }
